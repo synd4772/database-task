@@ -1,0 +1,7 @@
+{
+  "permissions": ["mute", "kick", "ban", "edit", "in_mute"],
+  "guild_status": ["main", "special", "default"],
+  "permission_statuses": ["default", "custom"],
+  "default_guilds_and_members": {"1255512503673426001":["742340558504198165", "703722066771443816"]},
+  "common_commands" : ["check-permission", "get-roles", "add-role"]
+}
