@@ -5,16 +5,42 @@ from other.records import *
 
 def get_guilds(d_member_id: str) -> list: # ( ДОПОЛНИТЕЛЬНЫЕ АРГУМЕНТЫ НЕ ДОБАВЛЯТЬ )
   # эта функция прежде всего должна узнать есть ли участник в базе данных,
+  member_id = main_dtbs.execute_query(f'SELECT id FROM guild_members  WHERE d_member_id = "{d_member_id}"')
+  if not member_id:
+        print("нет такого бро")
+        return False
   # если да, то ищет дискордный айди дискорд сервера в котором он находится ( нужно учитывать то, что пользователь может находится
   # на разных серверах )
-  # N.B. ЕСЛИ СЕРВЕР БУДЕТ НЕ НАЙДЕН, ТО НУЖНО ВОЗВРАЩАТЬ "None"
+  member_id = member_id[0][0]
 
-  return # вернуть нужно дискордный айди дискорд сервера в виде списка
+  guild_id = main_dtbs.execute_query(f'SELECT id FROM guilds WHERE d_guild_id =  "{member.guild.id}" ')
+  DD_guild_id = main_dtbs.execute_query(f'SELECT d_guild_id FROM guilds WHERE id = "{guild_id}"')
+  if not guild_id :
+    print("бож такого сервера нет")
+    return None
+  # N.B. ЕСЛИ СЕРВЕР БУДЕТ НЕ НАЙДЕН, ТО НУЖНО ВОЗВРАЩАТЬ "None"
+  guild_ids = [elm[0] for elm in DD_guild_id]
+
+  return guild_ids # вернуть нужно дискордный айди дискорд сервера в виде списка
 
 def get_permissions(d_member_id: str) -> list: # ( ДОПОЛНИТЕЛЬНЫЕ АРГУМЕНТЫ НЕ ДОБАВЛЯТЬ )
+  guild_members_id = main_dtbs.execute_query(f'SELECT id FROM guild_members WHERE d_member_id = "{d_member_id}"')
+  if not guild_members_id:
+    return []
+  guild_members_id = guild_members_id[0][0]
+
+  member_permissions_id = main_dtbs.execute_query(f'SELECT permission_id FROM member_permissions WHERE member_id = "{guild_members_id}"')
+  if not member_permissions_id:
+    return []
+  lst_member_permissions_ids = [elm[0] for elm in member_permissions_id]
+
+  member_permissions = main_dtbs.execute_query(f'SELECT name FROM permissions WHERE permission_id = "{member_permissions_id}" ')
+  lst_permissions = [name[0] for name in member_permissions]
+  return lst_permissions
+
   # эта функция должна возвращать список прав пользователя из базы данных. И именно список.
   # если нету прав , возвращается пустой список
-  return 
+
 
 def get_commands_by_permissions(permission_id: int | list, guild_id: int) -> list: # ( ДОПОЛНИТЕЛЬНЫЕ АРГУМЕНТЫ НЕ ДОБАВЛЯТЬ )
   # эта функция будет возвращать все команды доступные по праву, а тоесть permission_id ( это если что индекс записи в таблице permissions )
